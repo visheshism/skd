@@ -215,7 +215,7 @@ async function getMovies(url) {
 async function showMovies(movies) {
   main.innerHTML = "";
   for (const movie of movies) {
-      console.log("new ",movie.title, movie.name,movie);
+      console.log("new ",movie);
     const { title, name, poster_path, vote_average, overview, id } = movie;
     function checkimg() {
       if (poster_path === null) {
