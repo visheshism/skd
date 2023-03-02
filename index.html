@@ -1,8 +1,438 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
-<title>Sisters Ki Dukaan</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0 user-scalable=no" />
+
+    <title>Movies App</title>
+    <!-- <link rel="stylesheet" href="style.css"> -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;400&display=swap');
+
+        :root {
+            --primary-color: #22254b;
+            --secondary-color: #373b69;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            background-color: var(--primary-color);
+        }
+
+        header {
+            padding: 1rem;
+            display: flex;
+            justify-content: flex-end;
+            background-color: var(--secondary-color);
+        }
+
+        #type {
+            padding: 10px 15px;
+            margin-right: 3vw;
+            background-color: #565ca3;
+            color: #040738;
+            outline: none;
+            border-radius: 6px;
+            letter-spacing: 1px;
+            font-size: 14px;
+            border: 0.5px solid var(--secondary-color);
+            cursor: pointer;
+        }
+
+        #type:focus {
+            outline: none;
+            border: 2px solid var(--primary-color);
+            color: #7378c5;
+            font-size: 16px;
+            background-color: var(--secondary-color);
+        }
+
+        #type option {
+            border-radius: none;
+            font-size: 18px;
+            color: #fff;
+            background-color: rgba(128, 128, 128, 0.507);
+            border-bottom: 2px solid white;
+        }
+
+        .search {
+            background-color: transparent;
+            border: 2px solid var(--primary-color);
+            border-radius: 50px;
+            font-family: inherit;
+            font-size: 1rem;
+            padding: 0.5rem 1rem;
+            color: #fff;
+        }
+
+        .search::placeholder {
+            color: #7378c5;
+        }
+
+        .search:focus {
+            outline: none;
+            background-color: var(--primary-color);
+        }
+
+        main {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .movie {
+            width: 300px;
+            margin: 1rem;
+            background-color: var(--secondary-color);
+            box-shadow: 0 4px 5px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+            border-radius: 3px;
+        }
+
+        .movie img {
+            width: 100%;
+            /* max-height:60%; */
+        }
+
+        .movie-info {
+            color: #eee;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem 1rem 1rem;
+            letter-spacing: 0.5px;
+        }
+
+        .movie-info h3 {
+            margin-top: 0;
+        }
+
+
+        .movie-info span {
+            background-color: var(--primary-color);
+            padding: 0.25rem 0.5rem;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+        .movie-info span.green {
+            color: lightgreen;
+        }
+
+        .movie-info span.orange {
+            color: orange;
+        }
+
+        .movie-info span.red {
+            color: red;
+        }
+
+        .overview {
+            background-color: white;
+            padding: 2rem;
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            max-height: 100%;
+            transform: translateY(101%);
+            transition: transform 0.3s ease-in;
+        }
+
+        .movie:hover .overview {
+            transform: translateY(0%);
+
+        }
+    </style>
 </head>
+
 <body>
-<h2 style="color:blue;">Hello World!</h2>
+    <header>
+        <form action="" id="form">
+            <select name="" id="type">
+                <option value="movie">Movies</option>
+                <option value="tv">Tv Shows</option>
+            </select>
+            <input type="text" name="" id="search" class="search" placeholder="Search">
+        </form>
+    </header>
+
+    <main id="main">
+
+    </main>
+    <!-- <script src="script.js"></script> -->
+    <script>
+        //we could add more features like genres and more images on hover
+        //it was quite a smart move in themoviedb.org where the give /... urls but in docs evry element has diff domain
+        //also we can add next results and our data query changes page=2 or 3 depending on it current state and also gotta add restting it to 0 when opned
+        const type = document.getElementById('type')
+        var typeofd = 'movie'
+        var SEARCH_API = 'https://api.themoviedb.org/3/search/' + typeofd + '?api_key=474f6c09e43f09be2338ca3b9891e729&query="'
+        var URL_SELF = 'https://api.themoviedb.org/3/' + typeofd + '/'
+        var API_URL = 'https://api.themoviedb.org/3/discover/' + typeofd + '?sort_by=popularity.desc&api_key=474f6c09e43f09be2338ca3b9891e729&page=1'
+        https://api.themoviedb.org/3/watch/providers/movie?api_key=474f6c09e43f09be2338ca3b9891e729&language=en-US
+        https://api.themoviedb.org/3/discover/providers/movie?api_key=474f6c09e43f09be2338ca3b9891e729&language=en-US
+
+        type.addEventListener("input", (e) => {
+
+            if (type.value === 'tv') {
+                typeofd = 'tv'
+
+            } else if (type.value === 'movie') {
+                typeofd = 'movie'
+
+            }
+            API_URL = 'https://api.themoviedb.org/3/discover/' + typeofd + '?sort_by=popularity.desc&api_key=474f6c09e43f09be2338ca3b9891e729&page=1'
+            URL_SELF = 'https://api.themoviedb.org/3/' + typeofd + '/'
+            SEARCH_API = 'https://api.themoviedb.org/3/search/' + typeofd + '?api_key=474f6c09e43f09be2338ca3b9891e729&query="'
+            getMovies(API_URL)
+        }
+        )
+
+        const IMG_PATH = 'https://image.tmdb.org/t/p/w1280'
+        const api_pre = '?api_key=474f6c09e43f09be2338ca3b9891e729'
+
+        const main = document.getElementById('main')
+        const form = document.getElementById('form')
+        const search = document.getElementById('search')
+
+        // Get initial movies
+        getMovies(API_URL)
+
+
+
+        async function getMovies(url) {
+            const res = await fetch(url)
+            const data = await res.json()
+            showMovies(data.results)
+            // console.log(data.results)
+
+        }
+
+        async function showMovies(movies) {
+            main.innerHTML = ''
+            for (const movie of movies) {
+                const { title, name, poster_path, vote_average, overview, id } = movie
+                function checkimg() {
+                    if (poster_path === null) {
+                        // newtitle = title
+                        newtitle = search.value
+                        newtitle = newtitle.replace(/\s+/g, ",");
+                        // return 'https://loremflickr.com/g/300/450/' + newtitle + '/all'
+                        // the baove was returning some scary images 
+                        // return 'https://loremflickr.com/300/450/random/all'
+                        return 'https://loremflickr.com/g/300/450/' + newtitle + '/all'
+                    } else {
+                        return IMG_PATH + poster_path
+                    }
+                }
+                const homepage = await check(URL_SELF + id + api_pre)
+                const movieEl = document.createElement('div')
+                function changetitle() {
+
+                    if (type.value === 'tv') {
+                        return name
+                    } else if (type.value === 'movie') {
+                        return title
+                    }
+
+                }
+                function checkov() {
+                    if (overview === null || overview === "") {
+                        return 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Distinctio provident quas illo iusto porro eveniet consequatur dolorem, vitae magni optio. Tempora voluptates accusantium, fugit porro dolore commodi magnam.'
+
+                    } else {
+                        return overview
+                    }
+                }
+                movieEl.classList.add('movie')
+                movieEl.innerHTML = `
+      <a href="${homepage || '#'}" target="_blank"><img src="${checkimg()}" alt="${changetitle()}"></a>
+      <div class="movie-info">
+          <h3>${changetitle()}</h3>
+          <span class="${getClassByRate(vote_average)}">${vote_average}</span>
+      </div>
+      <div class="overview">
+          <h3>Overview</h3>
+          ${checkov()}
+      </div>`
+                main.appendChild(movieEl)
+            }
+        }
+
+        async function check(url) {
+            const res1 = await fetch(url)
+            const data2 = await res1.json()
+            const { homepage } = data2
+            return homepage
+        }
+
+        function getClassByRate(vote) {
+            if (vote >= 8) {
+                return 'green'
+            } else if (vote >= 5) {
+                return 'orange'
+            } else {
+                return 'red'
+            }
+        }
+
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault()
+
+            const searchTerm = search.value
+
+            if (searchTerm && searchTerm !== '') {
+                getMovies(SEARCH_API + searchTerm)
+
+                search.value = ''
+            } else {
+                window.location.reload()
+            }
+
+        })
+
+//old code
+
+// var API_URL = 'https://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=474f6c09e43f09be2338ca3b9891e729&page=1'
+// const IMG_PATH = 'https://image.tmdb.org/t/p/w1280'
+// var SEARCH_API = 'https://api.themoviedb.org/3/search/movie?api_key=474f6c09e43f09be2338ca3b9891e729&query="'
+// var URL_SELF = 'https://api.themoviedb.org/3/movie/'
+// const api_pre = '?api_key=474f6c09e43f09be2338ca3b9891e729'
+
+// const main = document.getElementById('main')
+// const form = document.getElementById('form')
+// const search = document.getElementById('search')
+// const type = document.getElementById('type')
+
+// checktype()
+
+// function checktype() {
+
+
+//     type.addEventListener("input", (e) => {
+
+//         if (type.value === 'tv') {
+//             console.log('dck')
+//             API_URL = 'https://api.themoviedb.org/3/discover/tv?sort_by=popularity.desc&api_key=474f6c09e43f09be2338ca3b9891e729&page=4'
+//             SEARCH_API = 'https://api.themoviedb.org/3/search/tv?api_key=474f6c09e43f09be2338ca3b9891e729&query="'
+//             URL_SELF = 'https://api.themoviedb.org/3/tv/'
+//             getMovies(API_URL)
+
+//         } else if (type.value === 'movie') {
+//             API_URL = 'https://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=474f6c09e43f09be2338ca3b9891e729&page=1'
+//             SEARCH_API = 'https://api.themoviedb.org/3/search/movie?api_key=474f6c09e43f09be2338ca3b9891e729&query="'
+//             URL_SELF = 'https://api.themoviedb.org/3/movie/'
+//             getMovies(API_URL)
+
+//         }
+//     }
+//     )
+// }
+
+
+
+// // Get initial movies
+// getMovies(API_URL)
+
+
+
+// async function getMovies(url) {
+//     const res = await fetch(url)
+//     const data = await res.json()
+//     showMovies(data.results)
+//     console.log(data.results)
+
+// }
+
+// async function showMovies(movies) {
+//     main.innerHTML = ''
+//     for (const movie of movies) {
+//         const { title, name, poster_path, vote_average, overview, id } = movie
+//         function checkimg() {
+//             if (poster_path === null) {
+//                 return 'https://loremflickr.com/g/300/450/movie,cinema/all'
+//             } else {
+//                 return IMG_PATH + poster_path
+//             }
+//         }
+//         const homepage = await check(URL_SELF + id + api_pre)
+//         const movieEl = document.createElement('div')
+//         function changetitle() {
+
+//             if (type.value === 'tv') {
+//                 return name
+//             } else if (type.value === 'movie') {
+//                 return title
+//             }
+
+//         }
+//         function checkov() {
+//             if (overview === null || overview === "") {
+//                 return 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Distinctio provident quas illo iusto porro eveniet consequatur dolorem, vitae magni optio. Tempora voluptates accusantium, fugit porro dolore commodi magnam.'
+
+//             } else {
+//                 return overview
+//             }
+//         }
+//         movieEl.classList.add('movie')
+//         movieEl.innerHTML = `
+//       <a href="${homepage || '#'}" target="_blank"><img src="${checkimg()}" alt="${changetitle()}"></a>
+//       <div class="movie-info">
+//           <h3>${changetitle()}</h3>
+//           <span class="${getClassByRate(vote_average)}">${vote_average}</span>
+//       </div>
+//       <div class="overview">
+//           <h3>Overview</h3>
+//           ${checkov()}
+//       </div>`
+//         main.appendChild(movieEl)
+//     }
+// }
+
+// async function check(url) {
+//     const res1 = await fetch(url)
+//     const data2 = await res1.json()
+//     const { homepage } = data2
+//     return homepage
+// }
+
+// function getClassByRate(vote) {
+//     if (vote >= 8) {
+//         return 'green'
+//     } else if (vote >= 5) {
+//         return 'orange'
+//     } else {
+//         return 'red'
+//     }
+// }
+
+
+// form.addEventListener('submit', (e) => {
+//     e.preventDefault()
+
+//     const searchTerm = search.value
+
+//     if (searchTerm && searchTerm !== '') {
+//         getMovies(SEARCH_API + searchTerm)
+
+//         search.value = ''
+//     } else {
+//         window.location.reload()
+//     }
+
+// })
+
+    </script>
 </body>
+
 </html>
